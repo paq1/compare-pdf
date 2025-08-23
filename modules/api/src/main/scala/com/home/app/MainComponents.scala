@@ -8,7 +8,7 @@ class MainComponents(context: ApplicationLoader.Context)
     extends BuiltInComponentsFromContext(context)
     with PdfComponent {
 
-  override def router: routing.Router = new ApiRouter(helloWorldController, pdfCompareController)
+  override def router: routing.Router = new ApiRouter(healthController, pdfCompareController)
   override def httpFilters: List[mvc.EssentialFilter] = List(
     new LoggingFilter()
   )

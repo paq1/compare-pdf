@@ -1,16 +1,16 @@
 package com.home.app
 
-import com.home.pdf.routers.{HelloWorldController, PdfCompareController}
+import com.home.pdf.routers.{HealthController, PdfCompareController}
 import play.api.routing.Router.Routes
 import play.api.routing.SimpleRouter
 import play.api.routing.sird._
 
 class ApiRouter(
-    helloWorldController: HelloWorldController,
+    healthController: HealthController,
     pdfCompareController: PdfCompareController
 ) extends SimpleRouter {
   override def routes: Routes = {
-    case GET(p"/helloWorld") => helloWorldController.helloWorld()
-    case POST(p"/diff")      => pdfCompareController.diffTextPdf()
+    case GET(p"/health") => healthController.health()
+    case POST(p"/diff")  => pdfCompareController.diffTextPdf()
   }
 }
