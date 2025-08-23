@@ -4,11 +4,12 @@ import com.home.pdf.routers.HelloWorldController.HelloWorldView
 import play.api.libs.json.{Json, Reads, Writes}
 import play.api.mvc._
 
+import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 final class HelloWorldController(
     override val controllerComponents: ControllerComponents
-)(implicit ec: ExecutionContext)
+)(implicit @unused ec: ExecutionContext)
     extends BaseController {
   def helloWorld(): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     val jsValue = Json.toJson(HelloWorldView())
