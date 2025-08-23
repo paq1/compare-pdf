@@ -1,6 +1,7 @@
 package com.home.pdf.routers
 
-import com.home.pdf.routers.HealthController.HealthView
+import com.play.controllers.HealthController
+import com.play.controllers.HealthController.HealthView
 import org.scalatestplus.play._
 import play.api.libs.json.{JsError, JsSuccess}
 import play.api.test.Helpers._

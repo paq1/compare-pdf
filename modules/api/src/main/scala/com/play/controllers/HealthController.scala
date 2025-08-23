@@ -1,6 +1,6 @@
-package com.home.pdf.routers
+package com.play.controllers
 
-import com.home.pdf.routers.HealthController.HealthView
+import com.play.controllers.HealthController.HealthView
 import play.api.libs.json.{Json, Reads, Writes}
 import play.api.mvc._
 
@@ -11,9 +11,10 @@ final class HealthController(
     override val controllerComponents: ControllerComponents
 )(implicit @unused ec: ExecutionContext)
     extends BaseController {
-  def health(): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
-    val jsValue = Json.toJson(HealthView())
-    Future.successful(Ok(jsValue))
+  def health(): Action[AnyContent] = Action.async {
+    implicit request: Request[AnyContent] =>
+      val jsValue = Json.toJson(HealthView())
+      Future.successful(Ok(jsValue))
   }
 }
 
