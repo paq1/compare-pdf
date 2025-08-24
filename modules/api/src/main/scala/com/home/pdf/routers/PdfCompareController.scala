@@ -1,6 +1,7 @@
 package com.home.pdf.routers
 
 import com.home.pdf.routers.PdfCompareController.{extractPdfText, isPdf}
+import com.home.pdf.services.comparator.LineDiff
 import com.home.pdf.services.comparator.texts.CanCompareText
 import org.apache.pdfbox.Loader
 import org.apache.pdfbox.text.PDFTextStripper
@@ -18,7 +19,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 class PdfCompareController(
-    fileContentCompartor: CanCompareText[List[String]],
+    fileContentCompartor: CanCompareText[List[LineDiff]],
     override val controllerComponents: ControllerComponents
 )(implicit @unused ec: ExecutionContext)
     extends BaseController {
@@ -50,7 +51,12 @@ class PdfCompareController(
                     "id" -> "whatever", // FIXME : generer un id
                     "attributes" -> Json.obj(
                       "isIdentique" -> differences.isEmpty,
-                      "details" -> differences,
+                      "details" -> differences.map { lineDiff =>
+                        Json.obj(
+                          "left" -> lineDiff.left,
+                          "right" -> lineDiff.right
+                        )
+                      },
                       "nombreErreur" -> differences.length
                     )
                   )

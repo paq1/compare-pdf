@@ -89,6 +89,37 @@ class JavaDiffUtilisTextComparatorSpec extends AnyWordSpec with Matchers {
 
       comparator.compare(text1, text2).length mustBe 2
     }
+
+    "readable content of delta" in {
+      val text1 =
+        """
+          |voici un simple text
+          |
+          |
+          |    il y a un espace
+          |
+          |    voici mes garantie:
+          |        DM : 30 euros
+          |        RCA : 50 euros
+          |        PJMO : 20 euros
+          |""".stripMargin
+      val text2 =
+        """
+          |voici un simple text
+          |
+          |
+          |    il y a un espace et un petit bruit ici
+          |
+          |    voici mes garantie:
+          |        DM : 30 euros
+          |        RCA : 50 euros
+          |        PJMO : 20 euros
+          |""".stripMargin
+
+      val result = comparator.compare(text1, text2).head
+      result.left mustBe "il y a un espace"
+      result.right mustBe "il y a un espace et un petit bruit ici"
+    }
   }
 
 
