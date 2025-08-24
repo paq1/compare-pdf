@@ -22,7 +22,7 @@ RUN sbt -batch update
 COPY . .
 
 # Compile + stage uniquement le module Play (démarreur dans target/universal/stage)
-RUN sbt -batch "${MODULE}/stage"
+RUN sbt -batch "${MODULE}/compile"
 
 # ---- Runtime stage ----------------------------------------------------------
 FROM eclipse-temurin:17-jre
