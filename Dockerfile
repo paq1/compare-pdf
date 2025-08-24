@@ -23,7 +23,7 @@ RUN sbt api/stage
 
 EXPOSE 9000
 
-CMD ["./modules/api/target/universal/stage/bin/compare-pdf-api"]
+CMD ["./modules/api/target/universal/stage/bin/compare-pdf-api", "-Dhttp.port=9000"]
 
 # ---- Runtime stage ----------------------------------------------------------
 # FROM eclipse-temurin:17-jre
