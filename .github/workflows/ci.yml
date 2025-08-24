@@ -7,7 +7,7 @@ on:
 env:
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-  IMAGE_NAME: compare-pdf-api
+  IMAGE_NAME: compare-pdf-api   # adapte au nom de ton app
 
 jobs:
   build-and-deploy:
@@ -17,15 +17,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Build de l'application avec sbt (dans un container scala-sbt)
-      - name: Build Play app
-        uses: addnab/docker-run-action@v3
-        with:
-          image: hseeberger/scala-sbt:17.0.13_1.10.2_3.3.3
-          options: -v ${{ github.workspace }}:/build -w /build
-          run: sbt api/stage
-
-      # Construire l'image docker (Dockerfile doit copier /api/target/universal/stage)
       - name: Build Docker image
         run: docker build -t ${{ env.IMAGE_NAME }} .
 
