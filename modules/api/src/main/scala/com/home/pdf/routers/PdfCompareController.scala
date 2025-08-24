@@ -18,7 +18,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 class PdfCompareController(
-    fileContentCompartor: CanCompareText,
+    fileContentCompartor: CanCompareText[List[String]],
     override val controllerComponents: ControllerComponents
 )(implicit @unused ec: ExecutionContext)
     extends BaseController {
@@ -50,7 +50,8 @@ class PdfCompareController(
                     "id" -> "whatever", // FIXME : generer un id
                     "attributes" -> Json.obj(
                       "isIdentique" -> differences.isEmpty,
-                      "details" -> differences.map(_.toString)
+                      "details" -> differences,
+                      "nombreErreur" -> differences.length
                     )
                   )
                 )

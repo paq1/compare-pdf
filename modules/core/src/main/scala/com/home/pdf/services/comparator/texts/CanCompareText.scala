@@ -1,7 +1,7 @@
 package com.home.pdf.services.comparator.texts
 
-import com.home.pdf.services.comparator.{CanCompare, LineDiff}
+import com.home.pdf.services.comparator.CanCompare
 
-trait CanCompareText extends CanCompare[String, List[LineDiff]] {
+trait CanCompareText[OUT] extends CanCompare[String, OUT] {
 
 }

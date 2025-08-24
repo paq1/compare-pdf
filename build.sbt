@@ -25,6 +25,7 @@ lazy val api = (project in file("modules/api"))
     name := s"$baseName-api",
     libraryDependencies ++= Seq(
       "org.apache.pdfbox" % "pdfbox" % "3.0.5",
+      "io.github.java-diff-utils" % "java-diff-utils" % "4.16",
       "org.playframework" %% "play-netty-server" % "3.0.8",
       "org.playframework" %% "play-server" % "3.0.8",
       "org.scalatestplus.play" %% "scalatestplus-play" % "7.0.2" % Test
