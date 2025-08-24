@@ -3,6 +3,7 @@ package com.home.pdf.routers
 import cats.data.Validated
 import com.home.pdf.routers.PdfCompareController.isPdf
 import com.home.pdf.services.comparator.files.CanCompareFile
+import com.home.pdf.views.DiffView
 import org.apache.pekko.util.ByteString
 import play.api.libs.Files
 import play.api.libs.json.Json
@@ -41,24 +42,8 @@ class PdfCompareController(
 
               fileCompartor
                 .compare(bsText1, bsText2)
-                .map { differences =>
-                  Json.obj(
-                    "data" -> Json.obj(
-                      "type" -> "comparaison",
-                      "id" -> "whatever", // FIXME : generer un id
-                      "attributes" -> Json.obj(
-                        "isIdentique" -> differences.isEmpty,
-                        "details" -> differences.map { lineDiff =>
-                          Json.obj(
-                            "left" -> lineDiff.left,
-                            "right" -> lineDiff.right
-                          )
-                        },
-                        "nombreErreur" -> differences.length
-                      )
-                    )
-                  )
-                }
+                .map(DiffView.intoSingleJsonApi)
+                .map(single => Json.toJson(single))
                 .map(Ok(_)) match {
                 case Validated.Valid(result) => result
                 case Validated.Invalid(e) =>
