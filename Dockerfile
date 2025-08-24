@@ -7,7 +7,7 @@ FROM sbtscala/scala-sbt:eclipse-temurin-17.0.15_6_1.11.4_3.3.6 as builder
 ARG MODULE=api
 ARG APP_NAME=compare-pdf-api
 
-WORKDIR /module/api
+WORKDIR /build
 
 # COPY build.sbt ./
 # COPY project ./project
@@ -19,11 +19,11 @@ COPY . .
 # Compiler + stage le module Play correctement
 # RUN sbt -batch ";project api; stage"
 
-RUN sbt stage
+RUN sbt api/stage
 
 EXPOSE 9000
 
-CMD ["./target/universal/stage/bin/main"]
+CMD ["./modules/api/target/universal/stage/bin/compare-pdf-api"]
 
 # ---- Runtime stage ----------------------------------------------------------
 # FROM eclipse-temurin:17-jre

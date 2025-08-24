@@ -21,6 +21,7 @@ lazy val commonSettings = Seq(
 
 lazy val api = (project in file("modules/api"))
   .dependsOn(core)
+  .enablePlugins(JavaAppPackaging, UniversalPlugin)
   .settings(
     name := s"$baseName-api",
     libraryDependencies ++= Seq(
