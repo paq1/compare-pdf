@@ -1,6 +1,8 @@
 package com.home.pdf.services.comparator
 
-final class FileContentComparator extends CanCompareFile[String] {
+import com.home.pdf.services.comparator.texts.CanCompareText
+
+final class FileContentComparator extends CanCompareText {
 
   override def compare(f1: String, f2: String): List[LineDiff] = {
     val l1 = sanitize(f1).split("\n", -1).toVector
