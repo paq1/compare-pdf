@@ -2,12 +2,12 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 env:
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-  IMAGE_NAME: compare-pdf-api   # <- adapte au nom de ton image Play
+  IMAGE_NAME: compare-pdf-api
 
 jobs:
   build-and-deploy:
@@ -17,13 +17,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # (optionnel) si tu veux exécuter les tests Scala avant de builder
-      - name: Run sbt tests
-        uses: sbt/setup-sbt@v1
+      # Build de l'application avec sbt (dans un container scala-sbt)
+      - name: Build Play app
+        uses: addnab/docker-run-action@v3
         with:
-          java-version: "17"
-      - run: sbt test
+          image: hseeberger/scala-sbt:17.0.13_1.10.2_3.3.3
+          options: -v ${{ github.workspace }}:/build -w /build
+          run: sbt api/stage
 
+      # Construire l'image docker (Dockerfile doit copier /api/target/universal/stage)
       - name: Build Docker image
         run: docker build -t ${{ env.IMAGE_NAME }} .
 
