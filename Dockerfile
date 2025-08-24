@@ -1,21 +1,21 @@
 # ---- Build stage ------------------------------------------------------------
 FROM eclipse-temurin:17-jdk AS builder
 
-# Installer sbt depuis le repo officiel
-RUN apt-get update && apt-get install -y curl gnupg apt-transport-https \
-    && echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" | tee /etc/apt/sources.list.d/sbt.list \
-    && curl -sL https://repo.scala-sbt.org/scalasbt/debian/scalasbt-repo.gpg.key | apt-key add - \
-    && apt-get update && apt-get install -y sbt \
+# Installer sbt à partir du .deb officiel
+RUN apt-get update && apt-get install -y curl gnupg \
+    && curl -L -o sbt.deb https://github.com/sbt/sbt/releases/download/v1.10.2/sbt-1.10.2.deb \
+    && apt-get install -y ./sbt.deb \
+    && rm sbt.deb \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /build
 
-# Pré-chauffer les dépendances (cache)
+# Pré-chauffer les dépendances
 COPY build.sbt .
 COPY project ./project
 RUN sbt -batch update
 
-# Copier le code et builder
+# Copier le reste et builder
 COPY . .
 RUN sbt -batch api/stage
 
