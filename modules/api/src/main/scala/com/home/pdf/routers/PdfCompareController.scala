@@ -1,5 +1,7 @@
 package com.home.pdf.routers
 
+import com.errors.cats.Implicits._
+import com.errors.{ErrorCode, Failure}
 import com.home.pdf.services.comparator.files.CanCompareFile
 import com.home.pdf.services.comparator.files.FileFromRequestComparator.FilePartTemporary
 import com.home.pdf.views.DiffView
@@ -31,16 +33,10 @@ class PdfCompareController(
           fileCompartor
             .compare(pdf1, pdf2)
             .map(DiffView.intoSingleJsonApi)
-            .map(view => Json.toJson(view))
-            .map(Ok(_))
-            .getOrElse(
-              InternalServerError(
-                Json.obj("error" -> "une erreur est survenue")
-              )
-            )
+            .intoResult(200)
         }
         .getOrElse(
-          BadRequest(Json.obj("error" -> "il faut deux pdf (pdf1 et pdf2)"))
+          BadRequest(Json.toJson(Failure.of(ErrorCode.BadRequest()).withDetail("il faut deux pdf (pdf1 et pdf2)")))
         )
 
       Future.successful(response)
