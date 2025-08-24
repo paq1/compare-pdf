@@ -9,26 +9,32 @@ ARG APP_NAME=compare-pdf-api
 
 WORKDIR /build
 
-COPY build.sbt ./
-COPY project ./project
-RUN sbt -batch update
+# COPY build.sbt ./
+# COPY project ./project
+# RUN sbt -batch update
 
 
 COPY . .
 
 # Compiler + stage le module Play correctement
-RUN sbt -batch ";project api; stage"
+# RUN sbt -batch ";project api; stage"
 
-# ---- Runtime stage ----------------------------------------------------------
-FROM eclipse-temurin:17-jre
-
-ENV PLAY_HTTP_PORT=9000 \
-    JAVA_OPTS="-Dplay.server.pidfile.path=/dev/null"
-
-WORKDIR /opt/app
-
-COPY --from=builder /build/${MODULE}/target/universal/stage/ /opt/app/
+RUN sbt stage
 
 EXPOSE 9000
 
-CMD ["/bin/sh", "-lc", "/opt/app/bin/$APP_NAME -Dhttp.port=${PLAY_HTTP_PORT} $JAVA_OPTS"]
+CMD ["./target/universal/stage/bin/main"]
+
+# ---- Runtime stage ----------------------------------------------------------
+# FROM eclipse-temurin:17-jre
+#
+# ENV PLAY_HTTP_PORT=9000 \
+#     JAVA_OPTS="-Dplay.server.pidfile.path=/dev/null"
+#
+# WORKDIR /opt/app
+#
+# COPY --from=builder /build/${MODULE}/target/universal/stage/ /opt/app/
+#
+# EXPOSE 9000
+#
+# CMD ["/bin/sh", "-lc", "/opt/app/bin/$APP_NAME -Dhttp.port=${PLAY_HTTP_PORT} $JAVA_OPTS"]
