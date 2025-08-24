@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+  compare-pdf-api:
+    image: ppaquin/compare-pdf-api:8749a113a4ec85a206d060a8bcb4f99f3bb7f8d1
+    container_name: compare-pdf-api
+    ports:
+      - "9050:9000"
+    environment:
+      - PLAY_HTTP_PORT=9000
+      - JAVA_OPTS=-Dplay.server.pidfile.path=/dev/null
+    # Optionnel : monter un dossier local pour tester des PDF
+    # volumes:
+    #   - ./pdfs:/opt/app/pdfs
+    restart: unless-stopped
