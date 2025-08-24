@@ -1,13 +1,21 @@
 # ---- Build stage ------------------------------------------------------------
-FROM sbt:1.10.2-jdk17 AS builder
+FROM eclipse-temurin:17-jdk AS builder
+
+# Installer sbt depuis le repo officiel
+RUN apt-get update && apt-get install -y curl gnupg apt-transport-https \
+    && echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" | tee /etc/apt/sources.list.d/sbt.list \
+    && curl -sL https://repo.scala-sbt.org/scalasbt/debian/scalasbt-repo.gpg.key | apt-key add - \
+    && apt-get update && apt-get install -y sbt \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /build
 
-# Copier en deux étapes pour profiter du cache
+# Pré-chauffer les dépendances (cache)
 COPY build.sbt .
 COPY project ./project
 RUN sbt -batch update
 
+# Copier le code et builder
 COPY . .
 RUN sbt -batch api/stage
 
@@ -19,10 +27,8 @@ ENV PLAY_HTTP_PORT=9000 \
 
 WORKDIR /opt/app
 
-# Copier le stage généré par sbt
 COPY --from=builder /build/api/target/universal/stage/ /opt/app/
 
-# Utilisateur non-root
 RUN adduser --disabled-password --gecos "" appuser \
     && chown -R appuser:appuser /opt/app
 USER appuser
