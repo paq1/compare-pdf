@@ -21,5 +21,5 @@ object ErrorCode {
   final case class UnsupportedMediaType(
       httpCode: Int = 415,
       title: String = "format de fichier non supporté"
-  )
+  ) extends ErrorCode
 }
