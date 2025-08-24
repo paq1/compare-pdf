@@ -37,6 +37,8 @@ lazy val api = (project in file("modules/api"))
 lazy val core = (project in file("modules/core"))
   .settings(
     name := s"$baseName-core",
-    libraryDependencies ++= Seq()
+    libraryDependencies ++= Seq(
+      "org.typelevel" %% "cats-core" % "2.13.0"
+    )
   )
   .settings(commonSettings)

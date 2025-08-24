@@ -1,10 +1,9 @@
 package com.home.pdf.routers
 
-import com.home.pdf.routers.PdfCompareController.{extractPdfText, isPdf}
-import com.home.pdf.services.comparator.LineDiff
-import com.home.pdf.services.comparator.texts.CanCompareText
-import org.apache.pdfbox.Loader
-import org.apache.pdfbox.text.PDFTextStripper
+import cats.data.Validated
+import com.home.pdf.routers.PdfCompareController.isPdf
+import com.home.pdf.services.comparator.files.CanCompareFile
+import org.apache.pekko.util.ByteString
 import play.api.libs.Files
 import play.api.libs.json.Json
 import play.api.mvc.{
@@ -16,10 +15,9 @@ import play.api.mvc.{
 
 import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 class PdfCompareController(
-    fileContentCompartor: CanCompareText[List[LineDiff]],
+    fileCompartor: CanCompareFile[ByteString],
     override val controllerComponents: ControllerComponents
 )(implicit @unused ec: ExecutionContext)
     extends BaseController {
@@ -39,30 +37,35 @@ class PdfCompareController(
             (for {
               bsText1 <- pdf1.refToBytes(pdf1.ref)
               bsText2 <- pdf2.refToBytes(pdf2.ref)
-              text1 <- extractPdfText(bsText1.toArray)
-              text2 <- extractPdfText(bsText2.toArray)
             } yield {
-              val differences = fileContentCompartor.compare(text1, text2)
 
-              Ok(
-                Json.obj(
-                  "data" -> Json.obj(
-                    "type" -> "comparaison",
-                    "id" -> "whatever", // FIXME : generer un id
-                    "attributes" -> Json.obj(
-                      "isIdentique" -> differences.isEmpty,
-                      "details" -> differences.map { lineDiff =>
-                        Json.obj(
-                          "left" -> lineDiff.left,
-                          "right" -> lineDiff.right
-                        )
-                      },
-                      "nombreErreur" -> differences.length
+              fileCompartor
+                .compare(bsText1, bsText2)
+                .map { differences =>
+                  Json.obj(
+                    "data" -> Json.obj(
+                      "type" -> "comparaison",
+                      "id" -> "whatever", // FIXME : generer un id
+                      "attributes" -> Json.obj(
+                        "isIdentique" -> differences.isEmpty,
+                        "details" -> differences.map { lineDiff =>
+                          Json.obj(
+                            "left" -> lineDiff.left,
+                            "right" -> lineDiff.right
+                          )
+                        },
+                        "nombreErreur" -> differences.length
+                      )
                     )
                   )
-                )
-              )
-
+                }
+                .map(Ok(_)) match {
+                case Validated.Valid(result) => result
+                case Validated.Invalid(e) =>
+                  InternalServerError(
+                    Json.obj("error" -> "une erreur est survenue")
+                  )
+              }
             })
               .getOrElse(
                 InternalServerError(
@@ -83,16 +86,6 @@ class PdfCompareController(
 }
 object PdfCompareController {
   type FilePartTemporary = MultipartFormData.FilePart[Files.TemporaryFile]
-
-  private def extractPdfText(bytes: Array[Byte]): Option[String] = {
-    Try {
-      val doc = Loader.loadPDF(bytes)
-      val stripper = new PDFTextStripper()
-      val text = stripper.getText(doc)
-      doc.close()
-      text
-    }.toOption
-  }
 
   private def isPdf(
       file1: FilePartTemporary,
