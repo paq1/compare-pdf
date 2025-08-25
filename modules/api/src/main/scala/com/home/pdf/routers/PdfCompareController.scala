@@ -18,7 +18,7 @@ import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 class PdfCompareController(
-    fileCompartor: CanCompareFile[FilePartTemporary],
+    fileComparator: CanCompareFile[FilePartTemporary],
     override val controllerComponents: ControllerComponents
 )(implicit @unused ec: ExecutionContext)
     extends BaseController {
@@ -30,13 +30,19 @@ class PdfCompareController(
         pdf2 <- request.body.file("pdf2")
       } yield (pdf1, pdf2))
         .map { case (pdf1, pdf2) =>
-          fileCompartor
+          fileComparator
             .compare(pdf1, pdf2)
             .map(DiffView.intoSingleJsonApi)
             .intoResult(200)
         }
         .getOrElse(
-          BadRequest(Json.toJson(Failure.of(ErrorCode.BadRequest()).withDetail("il faut deux pdf (pdf1 et pdf2)")))
+          BadRequest(
+            Json.toJson(
+              Failure
+                .of(ErrorCode.BadRequest())
+                .withDetail("il faut deux pdf (pdf1 et pdf2)")
+            )
+          )
         )
 
       Future.successful(response)

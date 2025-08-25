@@ -13,7 +13,7 @@ import play.api.libs.Files
 import play.api.mvc.MultipartFormData
 
 class FileFromRequestComparator(
-    fileCompartor: CanCompareFile[ByteString]
+    fileComparator: CanCompareFile[ByteString]
 ) extends CanCompareFile[FilePartTemporary] {
 
   override def compare(
@@ -32,14 +32,16 @@ class FileFromRequestComparator(
         bsText1 <- pdf1.refToBytes(pdf1.ref)
         bsText2 <- pdf2.refToBytes(pdf2.ref)
       } yield {
-        fileCompartor
+        fileComparator
           .compare(bsText1, bsText2)
       })
         .getOrElse(
-
           Invalid(
-            Failure.of(ErrorCode.InternalServerError())
-              .withDetail("une erreur est survenue lors de la transformation en ByteString des fichier pdf1 et/ou pdf2")
+            Failure
+              .of(ErrorCode.InternalServerError())
+              .withDetail(
+                "une erreur est survenue lors de la transformation en ByteString des fichier pdf1 et/ou pdf2"
+              )
           )
         )
     }
@@ -53,9 +55,13 @@ object FileFromRequestComparator {
   private def isPdf(
       file1: FilePartTemporary,
       file2: FilePartTemporary
+  ): Boolean = isPdf(file1) && isPdf(file2)
+
+  private def isPdf(
+      file1: FilePartTemporary
   ): Boolean = {
-    file1.contentType.contains("application/pdf") && file2.contentType.contains(
-      "application/pdf"
-    )
+    file1.contentType.contains(PdfApplicationMime)
   }
+
+  private val PdfApplicationMime = "application/pdf"
 }
