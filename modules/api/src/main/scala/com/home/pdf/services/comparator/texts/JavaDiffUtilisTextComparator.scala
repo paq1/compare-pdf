@@ -2,31 +2,35 @@ package com.home.pdf.services.comparator.texts
 
 import com.github.difflib.DiffUtils
 import com.github.difflib.patch.{AbstractDelta, Chunk}
-import com.home.pdf.services.comparator.LineDiff
+import com.home.common.comparator.texts.CanCompareText
+import com.home.common.data.{Difference, Differences, Texte}
+import com.home.pdf.services.comparator.texts.JavaDiffUtilisTextComparator.fromDeltaToDifference
 
 import scala.jdk.CollectionConverters._
 
-class JavaDiffUtilisTextComparator extends CanCompareText[List[LineDiff]] {
+class JavaDiffUtilisTextComparator extends CanCompareText {
 
-  override def compare(a: String, b: String): List[LineDiff] = {
-    val l1 = sanitize(a).split("\n").toList
-    val l2 = sanitize(b).split("\n").toList
+  override def compare(texte1: Texte, texte2: Texte): Differences =
+    Differences(
+      DiffUtils
+        .diff(texte1.getSplitedContent.asJava, texte2.getSplitedContent.asJava)
+        .getDeltas
+        .asScala
+        .map(fromDeltaToDifference)
+        .toList
+    )
 
-    val diff = DiffUtils.diff(l1.asJava, l2.asJava)
-    diff.getDeltas.asScala.map { abstractDelta: AbstractDelta[String] =>
-      val left: Chunk[String] = abstractDelta.getSource
-      val right = abstractDelta.getTarget
+}
+object JavaDiffUtilisTextComparator {
+  private def fromDeltaToDifference(
+      delta: AbstractDelta[String]
+  ): Difference = {
+    val left: Chunk[String] = delta.getSource
+    val right: Chunk[String] = delta.getTarget
 
-      val leftText = left.getLines.asScala.mkString.trim
-      val rightText = right.getLines.asScala.mkString.trim
+    val leftText = left.getLines.asScala.mkString.trim
+    val rightText = right.getLines.asScala.mkString.trim
 
-      LineDiff(left.getPosition, leftText, rightText)
-    }.toList
-
+    Difference(left = leftText, right = rightText)
   }
-
-  private def sanitize(s: String): String =
-    s.replaceAll("\r\n?", "\n")
-      .replaceAll("[ \t]+", " ")
-      .trim
 }

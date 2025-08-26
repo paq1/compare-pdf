@@ -2,9 +2,9 @@ package com.home.pdf.routers
 
 import com.errors.cats.Implicits._
 import com.errors.{ErrorCode, Failure}
-import com.home.pdf.services.comparator.files.CanCompareFile
+import com.home.common.comparator.files.CanCompareFile
 import com.home.pdf.services.comparator.files.FileFromRequestComparator.FilePartTemporary
-import com.home.pdf.views.DiffView
+import com.home.pdf.views.DifferencesView
 import play.api.libs.Files
 import play.api.libs.json.Json
 import play.api.mvc.{
@@ -32,7 +32,7 @@ class PdfCompareController(
         .map { case (pdf1, pdf2) =>
           fileComparator
             .compare(pdf1, pdf2)
-            .map(DiffView.intoSingleJsonApi)
+            .map(DifferencesView.intoSingleJsonApi)
             .intoResult(200)
         }
         .getOrElse(

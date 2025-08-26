@@ -3,8 +3,9 @@ package com.home.pdf.services.comparator.files
 import cats.data.Validated.Invalid
 import com.errors.catsLib.ValidatedErr
 import com.errors.{ErrorCode, Failure}
+import com.home.common.comparator.files.CanCompareFile
+import com.home.common.data.Differences
 import com.home.pdf.services.FilePdfService
-import com.home.pdf.services.comparator.LineDiff
 import com.home.pdf.services.comparator.files.FileFromRequestComparator.FilePartTemporary
 import org.apache.pekko.util.ByteString
 import play.api.libs.Files
@@ -18,7 +19,7 @@ class FileFromRequestComparator(
   override def compare(
       pdf1: FilePartTemporary,
       pdf2: FilePartTemporary
-  ): ValidatedErr[List[LineDiff]] = {
+  ): ValidatedErr[Differences] = {
 
     if (!isPdf(pdf1, pdf2)) {
       Invalid(
@@ -56,6 +57,4 @@ class FileFromRequestComparator(
 object FileFromRequestComparator {
   type FilePartTemporary =
     MultipartFormData.FilePart[Files.TemporaryFile]
-
-  private val PdfApplicationMime = "application/pdf"
 }
