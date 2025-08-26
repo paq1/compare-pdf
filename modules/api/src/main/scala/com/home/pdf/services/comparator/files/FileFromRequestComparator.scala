@@ -3,17 +3,16 @@ package com.home.pdf.services.comparator.files
 import cats.data.Validated.Invalid
 import com.errors.catsLib.ValidatedErr
 import com.errors.{ErrorCode, Failure}
+import com.home.pdf.services.FilePdfService
 import com.home.pdf.services.comparator.LineDiff
-import com.home.pdf.services.comparator.files.FileFromRequestComparator.{
-  FilePartTemporary,
-  isPdf
-}
+import com.home.pdf.services.comparator.files.FileFromRequestComparator.FilePartTemporary
 import org.apache.pekko.util.ByteString
 import play.api.libs.Files
 import play.api.mvc.MultipartFormData
 
 class FileFromRequestComparator(
-    fileComparator: CanCompareFile[ByteString]
+    fileComparator: CanCompareFile[ByteString],
+    filePdfService: FilePdfService[FilePartTemporary, ByteString]
 ) extends CanCompareFile[FilePartTemporary] {
 
   override def compare(
@@ -29,11 +28,11 @@ class FileFromRequestComparator(
       )
     } else {
       (for {
-        bsText1 <- pdf1.refToBytes(pdf1.ref)
-        bsText2 <- pdf2.refToBytes(pdf2.ref)
+        byteStringPdf1 <- filePdfService.getContentOpt(pdf1)
+        byteStringPdf2 <- filePdfService.getContentOpt(pdf2)
       } yield {
         fileComparator
-          .compare(bsText1, bsText2)
+          .compare(byteStringPdf1, byteStringPdf2)
       })
         .getOrElse(
           Invalid(
@@ -47,21 +46,16 @@ class FileFromRequestComparator(
     }
 
   }
-}
-object FileFromRequestComparator {
-  type FilePartTemporary =
-    MultipartFormData.FilePart[Files.TemporaryFile]
 
   private def isPdf(
       file1: FilePartTemporary,
       file2: FilePartTemporary
-  ): Boolean = isPdf(file1) && isPdf(file2)
+  ): Boolean = filePdfService.isPdf(file1) && filePdfService.isPdf(file2)
 
-  private def isPdf(
-      file1: FilePartTemporary
-  ): Boolean = {
-    file1.contentType.contains(PdfApplicationMime)
-  }
+}
+object FileFromRequestComparator {
+  type FilePartTemporary =
+    MultipartFormData.FilePart[Files.TemporaryFile]
 
   private val PdfApplicationMime = "application/pdf"
 }
