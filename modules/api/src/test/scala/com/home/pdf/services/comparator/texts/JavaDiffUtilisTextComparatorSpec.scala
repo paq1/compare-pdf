@@ -1,5 +1,7 @@
 package com.home.pdf.services.comparator.texts
 
+import com.home.common.data.Texte
+import com.home.common.services.comparator.texts.JavaDiffUtilisTextComparator
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
@@ -29,7 +31,7 @@ class JavaDiffUtilisTextComparatorSpec extends AnyWordSpec with Matchers {
           |        PJMO : 20 euros
           |""".stripMargin
 
-      comparator.compare(text1, text2) mustBe Nil
+      comparator.compare(Texte(text1), Texte(text2)).datas mustBe Nil
     }
 
     "list with 1 delta when is not same at one place" in {
@@ -58,7 +60,7 @@ class JavaDiffUtilisTextComparatorSpec extends AnyWordSpec with Matchers {
           |        PJMO : 20 euros
           |""".stripMargin
 
-      comparator.compare(text1, text2).length mustBe 1
+      comparator.compare(Texte(text1), Texte(text2)).getNombreErreur mustBe 1
     }
 
     "list with 2 deltas when is not same at 2 places" in {
@@ -87,7 +89,7 @@ class JavaDiffUtilisTextComparatorSpec extends AnyWordSpec with Matchers {
           |        PJMO : 20 euros
           |""".stripMargin
 
-      comparator.compare(text1, text2).length mustBe 2
+      comparator.compare(Texte(text1), Texte(text2)).getNombreErreur mustBe 2
     }
 
     "readable content of delta" in {
@@ -116,7 +118,7 @@ class JavaDiffUtilisTextComparatorSpec extends AnyWordSpec with Matchers {
           |        PJMO : 20 euros
           |""".stripMargin
 
-      val result = comparator.compare(text1, text2).head
+      val result = comparator.compare(Texte(text1), Texte(text2)).datas.head
       result.left mustBe "il y a un espace"
       result.right mustBe "il y a un espace et un petit bruit ici"
     }

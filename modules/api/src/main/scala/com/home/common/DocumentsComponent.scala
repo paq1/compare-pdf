@@ -1,21 +1,17 @@
-package com.home.pdf
+package com.home.common
 
 import com.home.common.comparator.files.CanCompareFile
 import com.home.common.comparator.texts.CanCompareText
-import com.home.pdf.routers.PdfCompareController
+import com.home.common.routers.PdfCompareController
+import com.home.common.services.comparator.files.FileFromRequestComparator.FilePartTemporary
+import com.home.common.services.comparator.files.{CanExtractText, FileFromRequestComparator}
+import com.home.common.services.comparator.texts.JavaDiffUtilisTextComparator
 import com.home.pdf.services.{FilePdfService, TemporaryFilePdfService}
-import com.home.pdf.services.comparator.files.FileFromRequestComparator.FilePartTemporary
-import com.home.pdf.services.comparator.files.{
-  CanExtractText,
-  FileComparator,
-  FileFromRequestComparator,
-  PdfTextExtractor
-}
-import com.home.pdf.services.comparator.texts.JavaDiffUtilisTextComparator
+import com.home.pdf.services.comparator.files.{PdfFileComparator, PdfTextExtractor}
 import org.apache.pekko.util.ByteString
 import play.api.BuiltInComponentsFromContext
 
-trait PdfComponent { self: BuiltInComponentsFromContext =>
+trait DocumentsComponent { self: BuiltInComponentsFromContext =>
 
   lazy val pdfCompareController = new PdfCompareController(
     fileFromRequestComparator,
@@ -28,7 +24,7 @@ trait PdfComponent { self: BuiltInComponentsFromContext =>
     temporaryFilePdfService
   )
   private lazy val fileComparator: CanCompareFile[ByteString] =
-    new FileComparator(textExtractor, fileContentCompartor)
+    new PdfFileComparator(textExtractor, fileContentCompartor)
 
   private lazy val textExtractor: CanExtractText[ByteString] =
     new PdfTextExtractor()

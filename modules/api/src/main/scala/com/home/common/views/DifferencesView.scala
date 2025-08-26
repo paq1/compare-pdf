@@ -1,4 +1,4 @@
-package com.home.pdf.views
+package com.home.common.views
 
 import com.home.common.data.Differences
 import com.jsonapi.JsonApi

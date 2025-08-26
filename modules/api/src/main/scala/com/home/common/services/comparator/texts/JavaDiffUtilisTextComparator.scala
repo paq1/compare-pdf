@@ -1,10 +1,10 @@
-package com.home.pdf.services.comparator.texts
+package com.home.common.services.comparator.texts
 
 import com.github.difflib.DiffUtils
 import com.github.difflib.patch.{AbstractDelta, Chunk}
 import com.home.common.comparator.texts.CanCompareText
 import com.home.common.data.{Difference, Differences, Texte}
-import com.home.pdf.services.comparator.texts.JavaDiffUtilisTextComparator.fromDeltaToDifference
+import com.home.common.services.comparator.texts.JavaDiffUtilisTextComparator.fromDeltaToDifference
 
 import scala.jdk.CollectionConverters._
 

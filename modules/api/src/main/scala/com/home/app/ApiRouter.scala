@@ -1,6 +1,6 @@
 package com.home.app
 
-import com.home.pdf.routers.PdfCompareController
+import com.home.common.routers.PdfCompareController
 import com.play.routers.ApiMetrics
 import play.api.routing.Router.Routes
 import play.api.routing.SimpleRouter
@@ -14,7 +14,7 @@ final class ApiRouter(
   override def routes: Routes = apiMetrics.routes
     .orElse(diffRoutes)
 
-  private lazy val diffRoutes: Routes = {
-    case POST(p"/diff")  => pdfCompareController.diffTextPdf()
+  private lazy val diffRoutes: Routes = { case POST(p"/diff") =>
+    pdfCompareController.diffTextPdf()
   }
 }

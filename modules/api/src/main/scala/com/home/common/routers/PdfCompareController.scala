@@ -1,10 +1,10 @@
-package com.home.pdf.routers
+package com.home.common.routers
 
 import com.errors.cats.Implicits._
 import com.errors.{ErrorCode, Failure}
 import com.home.common.comparator.files.CanCompareFile
-import com.home.pdf.services.comparator.files.FileFromRequestComparator.FilePartTemporary
-import com.home.pdf.views.DifferencesView
+import com.home.common.services.comparator.files.FileFromRequestComparator.FilePartTemporary
+import com.home.common.views.DifferencesView
 import play.api.libs.Files
 import play.api.libs.json.Json
 import play.api.mvc.{

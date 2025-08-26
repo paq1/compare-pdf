@@ -1,7 +1,7 @@
 package com.home.pdf.services
 
+import com.home.common.services.comparator.files.FileFromRequestComparator.FilePartTemporary
 import com.home.pdf.services.TemporaryFilePdfService.PdfApplicationMime
-import com.home.pdf.services.comparator.files.FileFromRequestComparator.FilePartTemporary
 import org.apache.pekko.util.ByteString
 
 final class TemporaryFilePdfService extends FilePdfService[FilePartTemporary, ByteString] {

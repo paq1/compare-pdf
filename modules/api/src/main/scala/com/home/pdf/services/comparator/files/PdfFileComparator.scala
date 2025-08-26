@@ -5,9 +5,10 @@ import com.errors.catsLib.ValidatedErr
 import com.home.common.comparator.files.CanCompareFile
 import com.home.common.comparator.texts.CanCompareText
 import com.home.common.data.Differences
+import com.home.common.services.comparator.files.CanExtractText
 import org.apache.pekko.util.ByteString
 
-class FileComparator(
+final class PdfFileComparator(
     textExtractor: CanExtractText[ByteString],
     textComparator: CanCompareText
 ) extends CanCompareFile[ByteString] {

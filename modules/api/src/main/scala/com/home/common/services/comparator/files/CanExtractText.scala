@@ -1,4 +1,4 @@
-package com.home.pdf.services.comparator.files
+package com.home.common.services.comparator.files
 
 import com.errors.catsLib.ValidatedErr
 import com.home.common.data.Texte
