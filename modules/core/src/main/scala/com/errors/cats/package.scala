@@ -1,7 +1,7 @@
 package com.errors
 
-import cats.data.Validated
+import _root_.cats.data.Validated
 
-package object catsLib {
+package object cats {
   type ValidatedErr[T] = Validated[Errors, T]
 }

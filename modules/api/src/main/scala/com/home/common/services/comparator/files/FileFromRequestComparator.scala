@@ -1,7 +1,7 @@
 package com.home.common.services.comparator.files
 
 import cats.data.Validated.Invalid
-import com.errors.catsLib.ValidatedErr
+import com.errors.cats.ValidatedErr
 import com.errors.{ErrorCode, Failure}
 import com.home.common.comparator.files.CanCompareFile
 import com.home.common.data.Differences

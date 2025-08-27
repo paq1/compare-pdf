@@ -2,7 +2,7 @@ package com.errors.cats
 
 import cats.data.Validated.{Invalid, Valid}
 import com.errors.ErrorCode.InternalServerError
-import com.errors.catsLib.ValidatedErr
+import com.errors.cats.ValidatedErr
 import com.errors.{ErrorCode, Failure}
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{Result, Results}

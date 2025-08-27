@@ -3,7 +3,7 @@ package com.home.pdf.services.comparator.files
 import cats.data.Validated.{Invalid, Valid}
 import com.errors.ErrorCode.InternalServerError
 import com.errors.Failure
-import com.errors.catsLib.ValidatedErr
+import com.errors.cats.ValidatedErr
 import com.home.common.data.Texte
 import com.home.common.services.comparator.files.CanExtractText
 import org.apache.pdfbox.Loader

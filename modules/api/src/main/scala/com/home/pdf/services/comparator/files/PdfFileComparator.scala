@@ -1,7 +1,7 @@
 package com.home.pdf.services.comparator.files
 
 import cats.implicits._
-import com.errors.catsLib.ValidatedErr
+import com.errors.cats.ValidatedErr
 import com.home.common.comparator.files.CanCompareFile
 import com.home.common.comparator.texts.CanCompareText
 import com.home.common.data.Differences

@@ -1,6 +1,6 @@
 package com.home.common.comparator.files
 
-import com.errors.catsLib.ValidatedErr
+import com.errors.cats.ValidatedErr
 import com.home.common.comparator.CanCompare
 import com.home.common.data.Differences
 
