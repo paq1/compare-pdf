@@ -43,3 +43,15 @@ lazy val core = (project in file("modules/core"))
     )
   )
   .settings(commonSettings)
+
+
+lazy val integration = (project in file("modules/integration"))
+  .enablePlugins(JavaAppPackaging, UniversalPlugin)
+  .settings(
+    name := s"$baseName-api",
+    libraryDependencies ++= Seq(
+      "com.github.agourlay" %% "cornichon-test-framework" % "0.22.1" % Test
+    ),
+    testFrameworks += new TestFramework("com.github.agourlay.cornichon.framework.CornichonFramework")
+  )
+  .settings(commonSettings)
