@@ -15,6 +15,7 @@ trait DocumentsComponent { self: BuiltInComponentsFromContext =>
 
   lazy val pdfCompareController = new PdfCompareController(
     fileFromRequestComparator,
+    environment,
     controllerComponents
   )
 

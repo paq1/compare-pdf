@@ -14,7 +14,9 @@ final class ApiRouter(
   override def routes: Routes = apiMetrics.routes
     .orElse(diffRoutes)
 
-  private lazy val diffRoutes: Routes = { case POST(p"/diff") =>
-    pdfCompareController.diffTextPdf()
+  private lazy val diffRoutes: Routes = {
+    case POST(p"/diff") =>
+      pdfCompareController.diffTextPdf()
+    case GET(p"/download") =>  pdfCompareController.mockDownloadFile()
   }
 }
