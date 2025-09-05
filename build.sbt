@@ -50,6 +50,7 @@ lazy val integration = (project in file("modules/integration"))
   .settings(
     name := s"$baseName-api",
     libraryDependencies ++= Seq(
+      "com.softwaremill.sttp.client4" %% "async-http-client-backend" % "4.0.0-M20",
       "com.github.agourlay" %% "cornichon-test-framework" % "0.22.1" % Test
     ),
     testFrameworks += new TestFramework("com.github.agourlay.cornichon.framework.CornichonFramework")

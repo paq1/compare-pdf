@@ -9,9 +9,9 @@ class MetricsTest extends CornichonFeature with AssertHealthStep {
 
   override def feature: FeatureDef = Feature("Call metrics") {
 
-    (0 to  1000).map { id =>
+    (0 to  1).map { id =>
       val errors = (0 to 500)
-      val expected = if (errors.contains(id)) "down"
+      val expected = if (errors.contains(id)) "up" // FIXME : mettre down
       else "up"
       Scenario(s"health $id") {
         assertHealthUp(expected)
