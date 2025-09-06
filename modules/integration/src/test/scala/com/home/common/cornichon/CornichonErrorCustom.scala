@@ -1,4 +1,4 @@
-package com.home.cornichon
+package com.home.common.cornichon
 
 import com.github.agourlay.cornichon.core.CornichonError
 

@@ -1,18 +1,17 @@
-package com.home.metrics
+package com.home.common.steps
 
 import cats.data.EitherT
-import com.github.agourlay.cornichon.CornichonFeature
 import com.github.agourlay.cornichon.core.Step
 import com.github.agourlay.cornichon.steps.regular.EffectStep
-import com.home.cornichon.CornichonErrorCustom
+import com.home.common.cornichon.{CornichonErrorCustom, CornichonFeatureCustom}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait AssertHealthStep { self: CornichonFeature =>
+trait AssertHealthStep { self: CornichonFeatureCustom =>
 
   protected def assertHealthUp(expected: String = "up")(implicit ec: ExecutionContext): Step = {
     AttachAs("Call health and assert is up") {
-      When I get(s"$urlForHealthCheck/health")
+      When I get(s"$url/health")
       Then I save_body_path("health" -> "health_result")
       Then assert status.is(200)
       And assert body.is(
@@ -39,19 +38,8 @@ trait AssertHealthStep { self: CornichonFeature =>
 
         }
       )
-
-      // Then I AssertStep(title = "exemple assertion custom", sc => {
-      //   sc.session
-      //     .getOpt("health_result")
-      //     .map { healthResult =>
-      //       GenericEqualityAssertion(isUp(healthResult), true)
-      //     }
-      //     .getOrElse(FailAssertion())
-      // })
     }
   }
-
-  protected def urlForHealthCheck: String = s"http://localhost:9000"
 
   private def isUp(value: String, expected: String = "up"): Boolean = value == expected
 
