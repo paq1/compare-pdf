@@ -4,7 +4,7 @@ import com.errors.cats.Implicits._
 import com.errors.{ErrorCode, Failure}
 import com.home.common.comparator.files.CanCompareFile
 import com.home.documents.common.services.comparator.files.FileFromRequestComparator.FilePartTemporary
-import com.home.documents.common.views.DifferencesView
+import com.home.documents.common.view.mappers.DifferencesViewMapper
 import org.apache.pekko.stream.scaladsl.StreamConverters
 import play.api.Environment
 import play.api.libs.Files
@@ -13,6 +13,9 @@ import play.api.mvc._
 
 import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
+
+import com.home.documents.common.view.parsers.DifferencesViewJson.Implicits._
+import com.jsonapi.parsers.JsonApiParser.Implicits._
 
 class PdfCompareController(
     fileComparator: CanCompareFile[FilePartTemporary],
@@ -30,7 +33,7 @@ class PdfCompareController(
         .map { case (pdf1, pdf2) =>
           fileComparator
             .compare(pdf1, pdf2)
-            .map(DifferencesView.intoSingleJsonApi)
+            .map(DifferencesViewMapper.intoSingleJsonApi)
             .intoResult(200)
         }
         .getOrElse(

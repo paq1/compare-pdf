@@ -24,7 +24,7 @@ private[cats] trait ImplicitsFailureJson extends Results {
     }
   }
 
-  implicit val wSchema: Writes[Failure] = { obj =>
+  implicit val wSchemaFailure: Writes[Failure] = { obj =>
     Json.obj(
       "error" -> Json.obj(
         "title" -> obj.errorCode.title,
