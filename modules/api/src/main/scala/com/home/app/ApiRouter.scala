@@ -1,6 +1,6 @@
 package com.home.app
 
-import com.home.common.routers.PdfCompareController
+import com.home.documents.common.routers.PdfCompareController
 import com.play.routers.ApiMetrics
 import play.api.routing.Router.Routes
 import play.api.routing.SimpleRouter
