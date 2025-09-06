@@ -1,10 +1,10 @@
-package com.home.common.routers
+package com.home.documents.common.routers
 
 import com.errors.cats.Implicits._
 import com.errors.{ErrorCode, Failure}
 import com.home.common.comparator.files.CanCompareFile
-import com.home.common.services.comparator.files.FileFromRequestComparator.FilePartTemporary
-import com.home.common.views.DifferencesView
+import com.home.documents.common.services.comparator.files.FileFromRequestComparator.FilePartTemporary
+import com.home.documents.common.views.DifferencesView
 import org.apache.pekko.stream.scaladsl.StreamConverters
 import play.api.Environment
 import play.api.libs.Files

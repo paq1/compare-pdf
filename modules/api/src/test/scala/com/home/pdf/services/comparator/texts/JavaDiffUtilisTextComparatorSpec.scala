@@ -1,7 +1,7 @@
 package com.home.pdf.services.comparator.texts
 
 import com.home.common.data.Texte
-import com.home.common.services.comparator.texts.JavaDiffUtilisTextComparator
+import com.home.documents.common.services.comparator.texts.JavaDiffUtilisTextComparator
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 

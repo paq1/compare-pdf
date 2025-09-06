@@ -1,4 +1,4 @@
-val baseName = "compare-pdf"
+val baseName = "compare-documents"
 
 name := baseName
 version := "1.0-SNAPSHOT"
@@ -20,16 +20,27 @@ lazy val commonSettings = Seq(
 )
 
 lazy val api = (project in file("modules/api"))
-  .dependsOn(core)
+  .dependsOn(lib)
+  .dependsOn(models)
   .enablePlugins(JavaAppPackaging, UniversalPlugin)
   .settings(
     name := s"$baseName-api",
     libraryDependencies ++= Seq(
-      "org.apache.pdfbox" % "pdfbox" % "3.0.5",
-      "io.github.java-diff-utils" % "java-diff-utils" % "4.16",
       "org.playframework" %% "play-netty-server" % "3.0.8",
       "org.playframework" %% "play-server" % "3.0.8",
       "org.scalatestplus.play" %% "scalatestplus-play" % "7.0.2" % Test
+    )
+  )
+  .settings(commonSettings)
+
+
+lazy val lib = (project in file("modules/lib"))
+  .dependsOn(core)
+  .settings(
+    name := s"$baseName-lib",
+    libraryDependencies ++= Seq(
+      "org.apache.pdfbox" % "pdfbox" % "3.0.5",
+      "io.github.java-diff-utils" % "java-diff-utils" % "4.16",
     )
   )
   .settings(commonSettings)
@@ -44,9 +55,18 @@ lazy val core = (project in file("modules/core"))
   )
   .settings(commonSettings)
 
+lazy val models = (project in file("modules/models"))
+  .settings(
+    name := s"$baseName-models",
+    libraryDependencies ++= Seq(
+      "org.typelevel" %% "cats-core" % "2.13.0"
+    )
+  )
+  .settings(commonSettings)
+
 
 lazy val integration = (project in file("modules/integration"))
-  .enablePlugins(JavaAppPackaging, UniversalPlugin)
+  .dependsOn(models)
   .settings(
     name := s"$baseName-api",
     libraryDependencies ++= Seq(

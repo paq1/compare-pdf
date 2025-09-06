@@ -1,18 +1,18 @@
-package com.home.common.services.comparator.files
+package com.home.documents.common.services.comparator.files
 
 import cats.data.Validated.Invalid
 import com.errors.cats.ValidatedErr
 import com.errors.{ErrorCode, Failure}
 import com.home.common.comparator.files.CanCompareFile
 import com.home.common.data.Differences
-import com.home.common.services.comparator.files.FileFromRequestComparator.FilePartTemporary
+import FileFromRequestComparator.FilePartTemporary
 import com.home.pdf.services.FilePdfService
 import org.apache.pekko.util.ByteString
 import play.api.libs.Files
 import play.api.mvc.MultipartFormData
 
 class FileFromRequestComparator(
-    fileComparator: CanCompareFile[ByteString],
+    fileComparator: CanCompareFile[Array[Byte]],
     filePdfService: FilePdfService[FilePartTemporary, ByteString]
 ) extends CanCompareFile[FilePartTemporary] {
 
@@ -33,7 +33,7 @@ class FileFromRequestComparator(
         byteStringPdf2 <- filePdfService.getContentOpt(pdf2)
       } yield {
         fileComparator
-          .compare(byteStringPdf1, byteStringPdf2)
+          .compare(byteStringPdf1.toArray, byteStringPdf2.toArray)
       })
         .getOrElse(
           Invalid(
