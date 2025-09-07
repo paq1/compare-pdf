@@ -1,3 +1,5 @@
+import Dependencies.*
+
 val baseName = "compare-documents"
 
 name := baseName
@@ -26,9 +28,9 @@ lazy val api = (project in file("modules/api"))
   .settings(
     name := s"$baseName-api",
     libraryDependencies ++= Seq(
-      "org.playframework" %% "play-netty-server" % "3.0.8",
-      "org.playframework" %% "play-server" % "3.0.8",
-      "org.scalatestplus.play" %% "scalatestplus-play" % "7.0.2" % Test
+      playNetty,
+      play,
+      scalatestPlay % Test
     )
   )
   .settings(commonSettings)
@@ -39,8 +41,8 @@ lazy val lib = (project in file("modules/lib"))
   .settings(
     name := s"$baseName-lib",
     libraryDependencies ++= Seq(
-      "org.apache.pdfbox" % "pdfbox" % "3.0.5",
-      "io.github.java-diff-utils" % "java-diff-utils" % "4.16",
+      pdfbox,
+      javaDiffUtils,
     )
   )
   .settings(commonSettings)
@@ -50,7 +52,7 @@ lazy val core = (project in file("modules/core"))
   .settings(
     name := s"$baseName-core",
     libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-core" % "2.13.0"
+      cats
     )
   )
   .settings(commonSettings)
@@ -59,7 +61,8 @@ lazy val models = (project in file("modules/models"))
   .settings(
     name := s"$baseName-models",
     libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-core" % "2.13.0"
+      cats,
+      playJsonParser
     )
   )
   .settings(commonSettings)
@@ -70,9 +73,9 @@ lazy val integration = (project in file("modules/integration"))
   .settings(
     name := s"$baseName-api",
     libraryDependencies ++= Seq(
-      "com.softwaremill.sttp.client4" %% "async-http-client-backend" % "4.0.0-M20",
-      "com.github.agourlay" %% "cornichon-test-framework" % "0.22.1" % Test
+      sttp,
+      cornichon % Test
     ),
-    testFrameworks += new TestFramework("com.github.agourlay.cornichon.framework.CornichonFramework")
+    testFrameworks += cornichonTestFramework
   )
   .settings(commonSettings)

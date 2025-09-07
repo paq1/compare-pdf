@@ -14,9 +14,6 @@ import play.api.mvc._
 import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
-import com.home.documents.common.view.parsers.DifferencesViewJson.Implicits._
-import com.jsonapi.parsers.JsonApiParser.Implicits._
-
 class DocumentsCompareController(
     fileComparator: CanCompareFile[FilePartTemporary],
     env: Environment,
