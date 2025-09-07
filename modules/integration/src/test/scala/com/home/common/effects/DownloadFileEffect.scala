@@ -4,6 +4,7 @@ import cats.data.EitherT
 import com.github.agourlay.cornichon.core.Step
 import com.github.agourlay.cornichon.steps.regular.EffectStep
 import com.home.common.cornichon.CornichonFeatureCustom
+import com.home.common.helpers.Files
 import sttp.client4.{UriContext, asByteArray, quickRequest}
 
 import java.util.Base64
@@ -29,7 +30,7 @@ trait DownloadFileEffect { self: CornichonFeatureCustom =>
               }
               .getOrElse(Array.emptyByteArray)
 
-            val encoded: String = Base64.getEncoder.encodeToString(byteArray)
+            val encoded: String = Files.encode(byteArray)
 
             Future.successful(
               context.session.addValue(keyEncodedFile, encoded)

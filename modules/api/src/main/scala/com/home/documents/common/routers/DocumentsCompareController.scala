@@ -17,18 +17,19 @@ import scala.concurrent.{ExecutionContext, Future}
 import com.home.documents.common.view.parsers.DifferencesViewJson.Implicits._
 import com.jsonapi.parsers.JsonApiParser.Implicits._
 
-class PdfCompareController(
+class DocumentsCompareController(
     fileComparator: CanCompareFile[FilePartTemporary],
     env: Environment,
     override val controllerComponents: ControllerComponents
 )(implicit @unused ec: ExecutionContext)
     extends BaseController {
 
-  def diffTextPdf(): Action[MultipartFormData[Files.TemporaryFile]] =
+  // FIXME : prendre en compte tout type de documents (pdf uniquement pour le moment)
+  def diffText(): Action[MultipartFormData[Files.TemporaryFile]] =
     Action(parse.multipartFormData).async { request =>
       val response = (for {
-        pdf1 <- request.body.file("pdf1")
-        pdf2 <- request.body.file("pdf2")
+        pdf1 <- request.body.file("document1")
+        pdf2 <- request.body.file("document2")
       } yield (pdf1, pdf2))
         .map { case (pdf1, pdf2) =>
           fileComparator
@@ -41,7 +42,7 @@ class PdfCompareController(
             Json.toJson(
               Failure
                 .of(ErrorCode.BadRequest())
-                .withDetail("il faut deux pdf (pdf1 et pdf2)")
+                .withDetail("il faut deux document (documents1 et documents2)")
             )
           )
         )
