@@ -5,33 +5,36 @@ import com.github.agourlay.cornichon.core.Step
 import com.github.agourlay.cornichon.steps.regular.EffectStep
 import com.home.common.cornichon.{CornichonErrorCustom, CornichonFeatureCustom}
 import com.home.common.helpers.Files
+import com.home.documents.common.views.DifferencesView
+import com.jsonapi.JsonApi
+import play.api.libs.json.Json
 import sttp.client4.{UriContext, basicRequest, multipart}
 
 import scala.concurrent.Future
 
 trait CompareFromCallApiEffect { self: CornichonFeatureCustom =>
 
-  def compareFromCall(keyFile1: String, keyFile2: String): Step = EffectStep
+  def compareFileFromDownloadKey(keyFile1: String, keyFile2: String): Step = EffectStep
     .fromEitherT(
-      s"download file from $endpointDownload",
+      s"compare file from keys ($keyFile1 and $keyFile2)",
       effect = { context =>
         EitherT {
 
+          Future.successful {
+            for {
+              encodedFile1 <- context
+                .session
+                .getOpt(keyFile1)
+                .toRight(CornichonErrorCustom(s"pas de fichier pour $keyFile1"))
+              encodedFile2 <- context
+                .session
+                .getOpt(keyFile2)
+                .toRight(CornichonErrorCustom(s"pas de fichier pour $keyFile2"))
 
-          val monObjet = for {
-            encodedFile1 <- context
-              .session
-              .getOpt(keyFile1)
-              .toRight(CornichonErrorCustom(s"pas de fichier pour $keyFile1"))
-            encodedFile2 <- context
-              .session
-              .getOpt(keyFile2)
-              .toRight(CornichonErrorCustom(s"pas de fichier pour $keyFile2"))
+              file1 <- Files.decode(encodedFile1)
+              file2 <- Files.decode(encodedFile2)
 
-            file1 <- Files.decode(encodedFile1)
-            file2 <- Files.decode(encodedFile2)
-
-            response = basicRequest
+              response = basicRequest
                 .post(uri"$url/diff")
                 .multipartBody(
                   multipart("document1", file1).fileName("doc1.pdf").contentType("application/pdf"),
@@ -39,26 +42,33 @@ trait CompareFromCallApiEffect { self: CornichonFeatureCustom =>
                 )
                 .send(httpBackend)
 
-            monObjetAanalyser <- if (response.code.code != 200) {
-              Left(CornichonErrorCustom(s"erreur lors de la comparaison : (${response.code.code})"))
-            } else {
-              response
-                .body
-                .map { _ =>
-                  "mon objet"
-                }
-                .left
-                .map(e => CornichonErrorCustom(e))
-            }
+              jsonApiResponse <- if (response.code.code != 200) {
+                Left(CornichonErrorCustom(s"erreur lors de la comparaison : (${response.code.code})"))
+              } else {
+                response
+                  .body
+                  .left
+                  .map {_ => CornichonErrorCustom(s"pas de body")}
+                  .flatMap { stringifyJson =>
+                    Json
+                      .parse(stringifyJson)
+                      .validate[JsonApi.Single[DifferencesView]]
+                      .asEither
+                      .left
+                      .map { err =>
+                        CornichonErrorCustom(err.toString)
+                      }
+                  }
+              }
 
-            // TODO : serialize objet to view
-            // TODO : check qu'il n'y ai pas de différence
-            // TODO : remonter une erreur en cas de différence
-
-          } yield monObjetAanalyser
+              _ <- if (!jsonApiResponse.data.attributes.isIdentique) {
+                Left(CornichonErrorCustom("les deux fichier ne sont pas identique"))
+              } else Right(())
 
 
-          Future.successful(monObjet.map(_ => context.session))
+
+            } yield context.session
+          }
         }
       }
     )
