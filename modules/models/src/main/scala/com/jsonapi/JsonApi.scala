@@ -1,6 +1,6 @@
 package com.jsonapi
 
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.{JsValue, Json, Reads, Writes}
 
 object JsonApi {
 
@@ -12,6 +12,16 @@ object JsonApi {
         ws: Writes[Attibutes]
     ): Writes[Single[Attibutes]] = { obj: Single[Attibutes] =>
       Json.obj("data" -> Json.toJson(obj.data))
+    }
+
+    implicit def rSchema[Attributes](implicit
+        ws: Reads[Attributes]
+    ): Reads[Single[Attributes]] = { js: JsValue =>
+      for {
+        data <- (js \ "data").validate[Data[Attributes]]
+      } yield {
+        Single(data)
+      }
     }
   }
 
@@ -29,6 +39,18 @@ object JsonApi {
         "id" -> obj.id,
         "attributes" -> Json.toJson(obj.attributes)
       )
+    }
+
+    implicit def rSchema[Attributes](implicit
+        ws: Reads[Attributes]
+    ): Reads[Data[Attributes]] = { js: JsValue =>
+      for {
+        dataType <- (js \ "type").validate[String]
+        id <- (js \ "id").validate[String]
+        attributes <- (js \ "attributes").validate[Attributes]
+      } yield {
+        Data(dataType, id, attributes)
+      }
     }
   }
 
